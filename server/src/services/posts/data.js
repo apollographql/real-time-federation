@@ -1,4 +1,6 @@
-module.exports = [
+const {kafka} = require("../../kafka");
+
+const posts = [
   {
     id: 1,
     authorID: 1,
@@ -16,3 +18,13 @@ module.exports = [
     publishedAt: "2020-09-09T20:04:57.000Z"
   }
 ];
+
+module.exports = {
+  get: () => {
+    return posts;
+  },
+  add: (post) => {
+    posts.push(post);
+    kafka.produce('POST_ADDED', JSON.stringify(post));
+  }
+};

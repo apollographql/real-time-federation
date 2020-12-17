@@ -1,8 +1,6 @@
 const { defaultFieldResolver } = require("graphql");
 const { SchemaDirectiveVisitor } = require("apollo-server");
 
-const redis = require("../../redis");
-
 class PublishDirective extends SchemaDirectiveVisitor {
   visitFieldDefinition(field) {
     const { resolve = defaultFieldResolver } = field;
@@ -13,7 +11,9 @@ class PublishDirective extends SchemaDirectiveVisitor {
 
       let streamData = [];
 
+      console.log('\x1b[41m!!!!!! 1 \x1b[0m', 1);
       if (typeof result === "object" && result !== null) {
+        console.log('\x1b[41m!!!!!! 2  result payload \x1b[0m', result, payload);
         streamData = payload.split(" ").reduce((acc, curr) => {
           acc.push(curr, result[curr]);
           return acc;
@@ -21,11 +21,13 @@ class PublishDirective extends SchemaDirectiveVisitor {
       } else {
         // Assumes string, number, or boolean
         // @TODO: Handle list response too?
+        console.log('\x1b[41m!!!!!! payload result \x1b[0m', payload, result);
         streamData.push(payload, result);
       }
 
-      // Publish event to Redis stream
-      redis.xadd("graphql_stream", "*", "event", event, ...streamData);
+      console.log('\x1b[41mevent  \x1b[0m', event);
+      console.log('\x1b[41mstreamData  \x1b[0m', streamData);
+      // @TODO: as a part of POC - this is another place to produce kafka events
 
       return result;
     };

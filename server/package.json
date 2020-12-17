@@ -5,9 +5,9 @@
   "main": "index.js",
   "scripts": {
     "server": "concurrently -k npm:server:*",
-    "server:authors": "nodemon ./src/services/authors/index.js",
-    "server:posts": "nodemon ./src/services/posts/index.js",
-    "server:gateway": "wait-on tcp:4001 tcp:4002 && nodemon ./src/index.js"
+    "server:authors": "nodemon --inspect=0.0.0.0:9231 ./src/services/authors/index.js",
+    "server:posts": "nodemon --inspect=0.0.0.0:9230 ./src/services/posts/index.js",
+    "server:gateway": "wait-on tcp:4001 tcp:4002 && nodemon --inspect=0.0.0.0:9229 ./src/index.js"
   },
   "keywords": [],
   "author": "",
@@ -19,7 +19,7 @@
     "concurrently": "^5.3.0",
     "dotenv": "^8.2.0",
     "graphql": "^15.3.0",
-    "ioredis": "^4.17.3",
+    "kafkajs": "^1.15.0",
     "nodemon": "^2.0.4",
     "socket.io": "^2.3.0",
     "wait-on": "^5.2.0"

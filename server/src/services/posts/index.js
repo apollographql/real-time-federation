@@ -4,16 +4,15 @@ const { buildFederatedSchema } = require("@apollo/federation");
 
 let posts = require("./data");
 const PublishDirective = require("../shared/PublishDirective");
-const redis = require("../../redis");
 const resolvers = require("./resolvers");
-const subscribeStream = require("../../redis/utils/streamSubscription");
 const typeDefs = require("./typeDefs");
+const { kafka } = require("../../kafka");
 
 const schema = buildFederatedSchema([{ typeDefs, resolvers }]);
 const directives = { _publish: PublishDirective };
 SchemaDirectiveVisitor.visitSchemaDirectives(schema, directives);
 
-const server = new ApolloServer({ schema, context: { redis } });
+const server = new ApolloServer({ schema });
 
 server.listen(process.env.POSTS_SERVICE_PORT).then(({ url }) => {
   console.log(`🚀 Posts service ready at ${url}`);
@@ -21,13 +20,9 @@ server.listen(process.env.POSTS_SERVICE_PORT).then(({ url }) => {
 
 /* Messages from Authors Service */
 
-subscribeStream(redis, "graphql_stream", results => {
-  results.forEach(({ data: { event, id } }) => {
-    if (event === "AUTHOR_REMOVED") {
-      const filteredPosts = posts.filter(
-        post => post.authorID !== parseInt(id)
-      );
-      posts = filteredPosts;
-    }
-  });
+kafka.subscribe('AUTHOR_REMOVED', ({ message }) => {
+  const filteredPosts = posts.filter(
+    post => post.authorID !== parseInt(message)
+  );
+  posts = filteredPosts;
 });

@@ -1,7 +1,25 @@
-# Real-time Queries with Apollo Federation
+# Real-time Queries with Apollo Federation and Kafka Demo
+This repository is a demo of using Apollo Federation with Kafka to build a real-time Queries with websockets.
 
 Apollo Federation doesn’t provide support [subscription operations](https://www.apollographql.com/docs/apollo-server/data/subscriptions/) at this time, but support for real-time query updates may be achieved by alternative means and may simultaneously complement certain software architectures. This repository demonstrates a possible solution for achieving real-time query updates to GraphQL clients through a combination of custom directives, an event store, and a transport layer for delivering event-related messages to the client. In tandem, this approach can provide a potential solution for communication between implementing services.
 
+
+## Usage
+
+1. walk through [Confluent Kafka Quickstart](https://docs.confluent.io/platform/current/quickstart/ce-docker-quickstart.html#ce-docker-quickstart) 
+As alternative one could use kafka environment from [kafkajs docs](https://kafka.js.org/docs/development-environment)
+
+2. create `./server/.env` and `./client/.env`
+```sh
+cp server/.env.sample server/.env && cp client/.env.sample client/.env
+```
+3. Run from the root directory of this repository:
+```sh
+docker-compose up --build
+```
+4. GraphQL Playground will be available at [http://localhost:4000/graphql](http://localhost:4000/graphql).
+A React app will be available at [http://localhost:3000](http://localhost:3000).
+ 
 ## Characteristics
 
 For this solution, it is helpful to view a data graph from the perspective of **state**. There are three spec-defined ways to interact with the state of a federated (or monolithic) graph:
@@ -55,20 +73,6 @@ To successfully implement this architecture, the following assumptions must be s
 **Event Store:**
 
 - Designed to be an architecturally separate component from the implementing services
-
-## Usage
-
-Steps to configure and run (using Docker):
-
-1. Add a `.env` file to the `server` directory using the `server/.env.sample` file as a template
-2. Add a `.env` file to the `client` directory using the `client/.env.sample` file as a template
-3. Run `docker-compose up --build` from the root directory of this repository
-
-GraphQL Playground will be available at [http://localhost:4000/graphql](http://localhost:4000/graphql).
-
-A React app will be available at [http://localhost:3000](http://localhost:3000).
-
-_Please note that this repository is meant for demonstration/development purposes only._
 
 ## Other Considerations
 
